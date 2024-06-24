@@ -135,12 +135,14 @@ https://mirror.sjtu.edu.cn {
     }
 
     handle {
-        file_server /* {
-            root /dists
+        reverse_proxy /* frontend:3000
+    }
+
+    handle /mirrorz/* {
+        uri strip_prefix /mirrorz
+        file_server {
+            root /var/www/mirrorz
         }
-        rewrite /docs/* /  # for react app
-        @hidden path */.*
-        respond @hidden 404
     }
 
     handle /lug/* {

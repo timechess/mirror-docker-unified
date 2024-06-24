@@ -19,11 +19,14 @@ def is_local(base: str):
 
 def common() -> list[Node]:
     frontends = Node("handle", [
-        Node('file_server /*', [
-            Node(f'root {FRONTEND_DIR}')
-        ]),
-        Node('rewrite /docs/* /', comment='for react app'),
-        *hidden()
+        Node('reverse_proxy /* frontend:3000'),
+    ])
+
+    mirrorz = Node("handle /mirrorz/*", [
+        Node('uri strip_prefix /mirrorz'),
+        Node('file_server', [
+            Node('root /var/www/mirrorz'),
+        ])
     ])
 
     lug = Node("handle /lug/*", [
@@ -68,6 +71,7 @@ def common() -> list[Node]:
         log() + \
         [BLANK_NODE] + \
         [frontends] + [BLANK_NODE] + \
+        [mirrorz] + [BLANK_NODE] + \
         [lug] + [BLANK_NODE] + \
         [monitors]
 
